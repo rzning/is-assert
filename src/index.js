@@ -126,8 +126,22 @@ export function isObjArr(value, keys = [], nonempty = false) {
 }
 
 /**
+ * 判断目标对象是否含有指定方法
+ * @type {<T extends string>(
+ *   obj: unknown,
+ *   funcName: T
+ * ) => obj is { [key in T]: (...args: any[]) => any }}
+ */
+export function hasFunc(obj, funcName) {
+  if (!isStr(funcName, true)) {
+    throw new TypeError('The funcName should be a string.')
+  }
+  return isObjWith(obj, funcName) && isFunc(obj[funcName])
+}
+
+/**
  * @param {boolean} condition
- * @param {string} message
+ * @param {string} [message]
  */
 export function assert(condition, message) {
   if (!condition) {
@@ -203,7 +217,19 @@ export function requireVar(value, message) {
      * 必须为包含指定属性的对象
      * @type {(keys: string | string[], propNonempty?: boolean) => void}
      */
-    isObjWith: gen(isObjWith, '含有指定属性的对象')
+    isObjWith: gen(isObjWith, '含有指定属性的对象'),
+    /**
+     * 必须为含有指定方法的对象
+     * @param {string} funcName
+     */
+    hasFunc(funcName) {
+      if (!hasFunc(value, funcName)) {
+        throw new TypeError(
+          message ||
+            `The parameter must be an object that contains ${funcName} method.`
+        )
+      }
+    }
   }
 }
 
@@ -217,6 +243,7 @@ export default {
   isStrArr,
   isObjArr,
   isObjWith,
+  hasFunc,
   assert,
   requireVar
 }

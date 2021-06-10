@@ -1,11 +1,14 @@
 {
   "name": "is-assert",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Type check and assert",
   "main": "src/index.js",
   "repository": "https://github.com/rzning/is-assert.git",
   "author": "Zhenning Ruan <rzning@outlook.com>",
   "license": "MIT",
+  "files": [
+    "src"
+  ],
   "keywords": [
     "is",
     "assert",
