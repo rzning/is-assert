@@ -27,11 +27,11 @@ function demo(name, value) {
 ```
 
 ```js
-import { requireVar } from 'is-assert'
+import { assertVar } from 'is-assert'
 
 function demo2(name, value) {
-  requireVar(name).isStr(true)
-  requireVar(value).isNum()
+  assertVar(name).isStr(true)
+  assertVar(value).isNum()
   // ...
 }
 ```

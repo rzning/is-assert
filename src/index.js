@@ -16,10 +16,25 @@ export function isStr(value, nonempty) {
 /**
  * 是否为数字
  * @param {unknown} value
- * @returns { value is number }
+ * @param {boolean} [nonzero]
+ * @returns {value is number}
  */
-export function isNum(value) {
-  return typeof value === 'number' && !isNaN(value)
+export function isNum(value, nonzero) {
+  const result = typeof value === 'number' && !isNaN(value)
+  if (nonzero) {
+    return result && value !== 0
+  }
+  return result
+}
+
+/**
+ * 是否为字符串或数字
+ * @param {unknown} value
+ * @param {boolean} [nonempty]
+ * @returns { value is string | number }
+ */
+export function isNumOrStr(value, nonempty) {
+  return isStr(value, nonempty) || isNum(value, nonempty)
 }
 
 /**
@@ -153,7 +168,7 @@ export function assert(condition, message) {
  * @param {unknown} value
  * @param {string} [message]
  */
-export function requireVar(value, message) {
+export function assertVar(value, message) {
   /**
    *
    * @param {(...args: any[]) => boolean} func
@@ -180,9 +195,14 @@ export function requireVar(value, message) {
     },
     /**
      * 必须为数字
-     * @type {() => void}
+     * @type {(nonzero?: boolean) => void}
      */
     isNum: gen(isNum, '数字'),
+    /**
+     * 必须为字符串或数字
+     * @type {(nonempty?: boolean) => void}
+     */
+    isNumOrStr: gen(isNumOrStr, '字符串或数字'),
     /**
      * 必须为函数
      * @type {() => void}
@@ -236,6 +256,7 @@ export function requireVar(value, message) {
 export default {
   isStr,
   isNum,
+  isNumOrStr,
   isFunc,
   isObj,
   isArr,
@@ -245,5 +266,5 @@ export default {
   isObjWith,
   hasFunc,
   assert,
-  requireVar
+  assertVar
 }
