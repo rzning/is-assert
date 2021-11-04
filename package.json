@@ -1,6 +1,6 @@
 {
   "name": "is-assert",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Type check and assert",
   "main": "src/index.js",
   "repository": "https://github.com/rzning/is-assert.git",

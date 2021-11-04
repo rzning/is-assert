@@ -38,6 +38,15 @@ export function isNumOrStr(value, nonempty) {
 }
 
 /**
+ * 是否为 Symbol
+ * @param {unknown} value
+ * @returns {value is symbol}
+ */
+export function isSymbol(value) {
+  return typeof value === 'symbol'
+}
+
+/**
  * 是否为函数
  * @param {unknown} value
  * @returns { value is Function }
@@ -49,7 +58,7 @@ export function isFunc(value) {
 /**
  * 是否为对象
  * @param {unknown} value
- * @returns {value is object}
+ * @returns {value is Record<PropertyKey, any>}
  */
 export function isObj(value) {
   return Object.prototype.toString.call(value) === '[object Object]'
@@ -93,20 +102,52 @@ export function isStrArr(value, nonempty, itemNonempty) {
 }
 
 /**
+ * 是否为属性键
+ * @param {unknown} value
+ * @returns {value is PropertyKey}
+ */
+export function isPropertyKey(value) {
+  return value && (isStr(value) || isNum(value) || isSymbol(value))
+}
+
+/**
+ * 是否为属性键数组
+ * @param {unknown} value
+ * @param {boolean} [nonempty]
+ * @returns {value is PropertyKey[]}
+ */
+export function isPropertyKeys(value, nonempty) {
+  if (Array.isArray(value)) {
+    const state = value.every((n) => isPropertyKey(n))
+    return nonempty ? state && value.length > 0 : state
+  }
+  return false
+}
+
+/**
+ * 获取属性键数组
+ * @template T
+ * @param {T | T[]} keys
+ * @param {string} callName
+ */
+function _getPropertyKeys(keys, callName) {
+  keys = isArr(keys) ? keys : [keys]
+  if (!isPropertyKeys(keys, true)) {
+    throw new TypeError(`${callName} 第二个参数应为合法的属性键或属性键数组`)
+  }
+  return keys
+}
+
+/**
  * 是否为包含指定属性的对象
- * @type {<T extends string>(
+ * @type {<T extends PropertyKey>(
  *  value: unknown,
  *  keys: T | T[],
  *  propNonempty?: boolean
  * ) => value is { [key in T]: typeof value[key] }}
  */
 export function isObjWith(value, keys, propNonempty = false) {
-  keys = isStr(keys) ? [keys] : keys
-  if (!isStrArr(keys, true, true)) {
-    throw new TypeError(
-      'isObjWith() 第二个入参 keys 应为字符串或字符串数组，且不含有空字符串。'
-    )
-  }
+  keys = _getPropertyKeys(keys, 'isObjWith()')
   return (
     isObj(value) &&
     keys.every((k) => (propNonempty ? value[k] : Reflect.has(value, k)))
@@ -115,19 +156,14 @@ export function isObjWith(value, keys, propNonempty = false) {
 
 /**
  * 是否为对象数组
- * @type {<T extends string>(
+ * @type {<T extends PropertyKey>(
  *  value: unknown,
  *  keys: T | T[],
  *  nonempty?: boolean
- * ) => value is { [key in T]: unknown}[]}
+ * ) => value is { [key in T]: any}[]}
  */
 export function isObjArr(value, keys = [], nonempty = false) {
-  keys = isStr(keys) ? [keys] : keys
-  if (!isStrArr(keys, false, true)) {
-    throw new TypeError(
-      'isObjArr() 第二个入参 keys 应为字符串或字符串数组，且不含有空字符串。'
-    )
-  }
+  keys = _getPropertyKeys(keys, 'isObjArr()')
   if (isArr(value)) {
     const state = value.every((item) => {
       if (isArr(keys, true)) {
@@ -257,11 +293,14 @@ export default {
   isStr,
   isNum,
   isNumOrStr,
+  isSymbol,
   isFunc,
   isObj,
   isArr,
   isEmptyArr,
   isStrArr,
+  isPropertyKey,
+  isPropertyKeys,
   isObjArr,
   isObjWith,
   hasFunc,
