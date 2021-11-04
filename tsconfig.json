@@ -1,0 +1,11 @@
+{
+  "include": ["src/index.js"],
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "allowJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "typings"
+  }
+}

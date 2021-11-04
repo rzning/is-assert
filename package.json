@@ -3,11 +3,14 @@
   "version": "0.0.4",
   "description": "Type check and assert",
   "main": "src/index.js",
+  "types": "typings/index.d.ts",
   "repository": "https://github.com/rzning/is-assert.git",
+  "homepage": "https://github.com/rzning/is-assert",
   "author": "Zhenning Ruan <rzning@outlook.com>",
   "license": "MIT",
   "files": [
-    "src"
+    "src",
+    "typings"
   ],
   "keywords": [
     "is",
